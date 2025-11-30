@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Desenvolvedores - LT Cloud{% endblock %}
+{% block content %}
+<div class="flex flex-col gap-6">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <div>
+            <p class="text-sm text-slate-500 uppercase tracking-wide">Cadastros</p>
+            <h1 class="text-2xl font-semibold text-slate-900">Desenvolvedores</h1>
+            <p class="text-slate-600 text-sm">Filtre por nome, senioridade ou skill.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <a href="{% url 'main:article_create' %}" class="bg-slate-200 text-slate-800 px-4 py-2 rounded hover:bg-slate-300 text-sm">Novo Artigo</a>
+            <a href="{% url 'main:developer_create' %}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">Novo Desenvolvedor</a>
+        </div>
+    </div>
+
+    <form method="get"
+          class="bg-white shadow-sm border border-slate-200 rounded p-4 grid gap-3 md:grid-cols-4"
+          hx-get="{% url 'main:developer_list' %}"
+          hx-target="#developers"
+          hx-trigger="keyup changed delay:300ms from:input, change"
+          hx-include="[name='search'], [name='seniority'], [name='skill']">
+        <input name="search" value="{{ search }}" class="border border-slate-300 px-3 py-2 rounded w-full" placeholder="Buscar por nome ou email">
+        <select name="seniority" class="border border-slate-300 px-3 py-2 rounded w-full">
+            <option value="">Todas senioridades</option>
+            <option value="jr" {% if seniority == 'jr' %}selected{% endif %}>Jr</option>
+            <option value="pl" {% if seniority == 'pl' %}selected{% endif %}>Pl</option>
+            <option value="sr" {% if seniority == 'sr' %}selected{% endif %}>Sr</option>
+        </select>
+        <input name="skill" value="{{ skill }}" class="border border-slate-300 px-3 py-2 rounded w-full" placeholder="Skill (ex: Django)">
+        <button class="bg-slate-900 text-white px-4 py-2 rounded hover:bg-black w-full md:w-auto">Filtrar</button>
+    </form>
+
+    {% include "main/partials/developer_cards.html" %}
+</div>
+{% endblock %}

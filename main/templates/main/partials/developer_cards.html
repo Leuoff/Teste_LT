@@ -1,0 +1,29 @@
+<div id="developers" class="grid md:grid-cols-3 gap-4">
+    {% for dev in developers %}
+        <div class="bg-white rounded shadow-sm border border-slate-200 p-4 flex flex-col gap-3">
+            <div class="flex items-start justify-between gap-2">
+                <div>
+                    <h2 class="font-semibold text-lg text-slate-900">{{ dev.name }}</h2>
+                    <p class="text-sm text-slate-600">{{ dev.email }}</p>
+                    <p class="text-xs uppercase tracking-wide text-slate-500 mt-1">{{ dev.get_seniority_display }}</p>
+                </div>
+                <span class="inline-flex items-center justify-center px-3 py-1 bg-slate-100 text-slate-800 text-xs rounded-full">Artigos {{ dev.article_total }}</span>
+            </div>
+
+            {% if dev.skills %}
+                <div class="flex flex-wrap gap-1">
+                    {% for s in dev.skills %}
+                        <span class="bg-slate-200 text-xs px-2 py-1 rounded">{{ s }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="flex flex-wrap gap-2">
+                <a href="{% url 'main:developer_update' dev.pk %}" class="px-3 py-1.5 text-sm border border-slate-300 rounded hover:bg-slate-50">Editar</a>
+                <a href="{% url 'main:developer_delete' dev.pk %}" class="px-3 py-1.5 text-sm border border-red-200 text-red-700 rounded hover:bg-red-50">Remover</a>
+            </div>
+        </div>
+    {% empty %}
+        <p class="text-slate-600">Nenhum desenvolvedor encontrado.</p>
+    {% endfor %}
+</div>

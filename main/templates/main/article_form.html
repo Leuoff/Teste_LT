@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Artigo - LT Cloud{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto bg-white border border-slate-200 shadow-sm rounded p-6">
+    <h1 class="text-xl font-semibold mb-4">{% if form.instance.pk %}Editar Artigo{% else %}Novo Artigo{% endif %}</h1>
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+            <div class="space-y-1">
+                <label class="block text-sm font-medium text-slate-700">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <p class="text-xs text-slate-500">{{ field.help_text }}</p>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p class="text-sm text-red-600">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <div class="flex gap-2">
+            <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Salvar</button>
+            <a href="{% url 'main:article_list' %}" class="px-4 py-2 border border-slate-300 rounded text-slate-700 hover:bg-slate-50">Cancelar</a>
+        </div>
+    </form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+    tinymce.init({
+        selector: '#id_content',
+        height: 400,
+        menubar: false,
+        plugins: 'link lists table code',
+        toolbar: 'undo redo | bold italic underline | bullist numlist | link table | code',
+        branding: false,
+        skin: document.documentElement.getAttribute('data-theme') === 'dark' ? 'oxide-dark' : 'oxide',
+        content_css: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default',
+    });
+</script>
+{% endblock %}

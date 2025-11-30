@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Developer - LT Cloud{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white border border-slate-200 shadow-sm rounded p-6">
+    <h1 class="text-xl font-semibold mb-4">{% if form.instance.pk %}Editar Developer{% else %}Novo Developer{% endif %}</h1>
+    <form method="post" class="space-y-4">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+            <div class="space-y-1">
+                <label class="block text-sm font-medium text-slate-700">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <p class="text-xs text-slate-500">{{ field.help_text }}</p>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p class="text-sm text-red-600">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <div class="flex gap-2">
+            <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Salvar</button>
+            <a href="{% url 'main:developer_list' %}" class="px-4 py-2 border border-slate-300 rounded text-slate-700 hover:bg-slate-50">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

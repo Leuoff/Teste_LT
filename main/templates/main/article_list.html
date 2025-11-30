@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Artigos - LT Cloud{% endblock %}
+{% block content %}
+<div class="flex flex-col gap-6">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <div>
+            <p class="text-sm text-slate-500 uppercase tracking-wide">Conteudo</p>
+            <h1 class="text-2xl font-semibold text-slate-900">Artigos</h1>
+            <p class="text-slate-600 text-sm">Associe desenvolvedores e mantenha a biblioteca organizada.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <a href="{% url 'main:developer_list' %}" class="bg-slate-200 text-slate-800 px-4 py-2 rounded hover:bg-slate-300 text-sm">Desenvolvedores</a>
+            <a href="{% url 'main:article_create' %}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">Novo Artigo</a>
+        </div>
+    </div>
+
+    <form method="get" class="bg-white shadow-sm border border-slate-200 rounded p-4 grid gap-3 md:grid-cols-3">
+        <input name="search" value="{{ search }}" class="border border-slate-300 px-3 py-2 rounded w-full" placeholder="Buscar por titulo ou conteudo">
+        <select name="developer" class="border border-slate-300 px-3 py-2 rounded w-full">
+            <option value="">Todos desenvolvedores</option>
+            {% for dev in developer_options %}
+                <option value="{{ dev.id }}" {% if developer_id == dev.id|stringformat:"s" %}selected{% endif %}>{{ dev.name }}</option>
+            {% endfor %}
+        </select>
+        <button class="bg-slate-900 text-white px-4 py-2 rounded hover:bg-black w-full md:w-auto">Filtrar</button>
+    </form>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for article in articles %}
+            <div class="bg-white rounded border border-slate-200 shadow-sm flex flex-col">
+                {% if article.cover_image %}
+                    <img src="{{ article.cover_image.url }}" alt="" class="rounded-t object-cover h-40 w-full">
+                {% endif %}
+                <div class="p-4 flex flex-col gap-3 flex-1">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <p class="text-xs uppercase text-slate-500 tracking-wide">Slug: {{ article.slug }}</p>
+                            <h2 class="text-lg font-semibold text-slate-900">
+                                <a href="{% url 'main:article_detail' article.pk %}" class="hover:underline">{{ article.title }}</a>
+                            </h2>
+                            <p class="text-xs text-slate-600">Autor: {{ article.user.username }}</p>
+                            {% if article.published_at %}
+                                <p class="text-xs text-slate-600">Publicado em {{ article.published_at|date:"d/m/Y" }}</p>
+                            {% endif %}
+                        </div>
+                        <span class="inline-flex items-center justify-center px-3 py-1 bg-slate-100 text-slate-800 text-xs rounded-full">Desenvolvedores {{ article.developer_total }}</span>
+                    </div>
+                    <p class="text-sm text-slate-700 overflow-hidden" style="-webkit-line-clamp: 3; -webkit-box-orient: vertical; display: -webkit-box;">{{ article.content|safe }}</p>
+                    {% if article.developer_total %}
+                        <div class="flex flex-wrap gap-1">
+                            {% for dev in article.developers.all %}
+                                <span class="bg-slate-200 text-xs px-2 py-1 rounded">{{ dev.name }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if request.user.is_superuser or article.user == request.user %}
+                        <div class="flex gap-2 mt-auto">
+                            <a href="{% url 'main:article_update' article.pk %}" class="px-3 py-1.5 text-sm border border-slate-300 rounded hover:bg-slate-50">Editar</a>
+                            <a href="{% url 'main:article_delete' article.pk %}" class="px-3 py-1.5 text-sm border border-red-200 text-red-700 rounded hover:bg-red-50">Remover</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-slate-600">Nenhum artigo encontrado.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
